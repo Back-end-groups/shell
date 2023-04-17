@@ -28,7 +28,6 @@ project:
   salt: shuai
 
 
-
 # 设置 Mp（MyBatis-Plus）相关的配置
 mybatis-plus:
   global-config:

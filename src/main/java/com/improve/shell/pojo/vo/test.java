@@ -1,4 +1,4 @@
-package com.improve.shell.po;
+package com.improve.shell.pojo.vo;
 
 /**
  * @Author: fengxin
