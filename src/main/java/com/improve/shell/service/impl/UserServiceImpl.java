@@ -123,6 +123,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userMapper.insert(user);
         // 添加成功后通过设置uservo的id属性为数据库的id
         uservo.setId(user.getId());
-        return Result.success("注册成功，请重新登录！");
+        return Result.success("注册成功，请登录！");
     }
 }

@@ -64,7 +64,7 @@ public class LoginHandler implements HandlerInterceptor {
         String userJson = (String) redisTemplate.opsForValue().get(RedisKey.TOKEN + token);
         if (StringUtils.isBlank(userJson)){
             response.setContentType("application/json;charset=utf-8");
-            response.getWriter().write(JSON.toJSONString(Result.fail("未登录")));
+            response.getWriter().write(JSON.toJSONString(Result.fail("未登录!")));
             return false;
         }
         UserVO uservo = JSON.parseObject(userJson, UserVO.class);
