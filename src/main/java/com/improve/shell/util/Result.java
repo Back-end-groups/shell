@@ -7,9 +7,15 @@ import java.io.Serializable;
 /*前后端数据协议*/
 @Data
 public class Result implements Serializable {
-    private Boolean flag;       // 响应给前端的数据是否成功
-    private String message;     // 响应信息
-    private Object data;        // 响应数据
+
+    // 响应给前端的数据是否成功
+    private Boolean flag;
+
+    // 响应信息
+    private String message;
+
+    // 响应数据
+    private Object data;
 
     public Result(){}
 

@@ -32,7 +32,7 @@ project:
 mybatis-plus:
   global-config:
     db-config:
-      table-prefix: tbl_
+      table-prefix:
       id-type: auto # 自增策略
     #  id-type: assign_id #系统默认
 
@@ -48,11 +48,11 @@ qiniu:          # 下面需要重新配置
   # 桶：就是七牛云上的空间
   bucket: shuai-trip
 
-# 微信小程序配置
-weixin:
-# 密钥
-#  appid: wx3cb31583481cd5c8
-#  secret: ce8401ddc086439214924ec4b968b6f5
-  appid: wx5df81eb4d30427f5
-  secret: 6a7af2de711921bf41095dbf192adff2
+## 微信小程序配置
+#weixin:
+## 密钥
+##  appid: wx3cb31583481cd5c8
+##  secret: ce8401ddc086439214924ec4b968b6f5
+#  appid: wx5df81eb4d30427f5
+#  secret: 6a7af2de711921bf41095dbf192adff2
 
