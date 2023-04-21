@@ -51,11 +51,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 判断用户存不存在
         if (null != userRecord){
             //用户存在：
+            //将密码进行MD5加密
+            uservo.setPassword(MD5Utils.digest(uservo.getPassword()));
             if (Objects.equals(uservo.getPassword(), userRecord.getPassword())){
                 //获取uid
                 uservo.setId(userRecord.getId());
-                //将密码进行MD5加密
-                uservo.setPassword(MD5Utils.digest(uservo.getPassword()));
                 return this.login(uservo);
             }else {
                 return Result.fail("账号或密码错误！");
@@ -113,6 +113,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         //用户不存在：
         User user = new User();
+        //将密码进行MD5加密
+        uservo.setPassword(MD5Utils.digest(uservo.getPassword()));
         // 将uservo的值全部赋值给user：为了用user存入数据库
         BeanUtils.copyProperties(uservo,user);
         // 获取并设置注册时间
