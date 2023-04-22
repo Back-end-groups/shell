@@ -29,6 +29,13 @@
             <version>3.5.2</version>
         </dependency>
 
+        <!--添加数据库的多环境配置-->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+            <version>3.5.0</version>
+        </dependency>
+
         <!--添加德鲁伊（druid）的依赖-->
         <dependency>
             <groupId>com.alibaba</groupId>
