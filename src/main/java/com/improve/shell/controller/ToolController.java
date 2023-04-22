@@ -1,4 +1,4 @@
-package com.shuai.controller;
+package com.improve.shell.controller;
 
 
 import com.improve.shell.util.QiniuUtils;
