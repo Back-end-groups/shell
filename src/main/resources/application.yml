@@ -7,11 +7,14 @@ spring:
     name: shell
   # 配置 mysql数据库
   datasource:
-    druid:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/shell
-      username: root
-      password: shuai
+        druid:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://localhost:3306/reggie?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+          username: root
+          password: Hzx123456
+
+
+
   # redis相关配置
   redis:
     # 配置主机
