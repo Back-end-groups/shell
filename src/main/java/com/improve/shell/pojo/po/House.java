@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 /**
  * @Author: fengxin
  * @CreateTime: 2023-04-19  18:28
@@ -42,10 +45,10 @@ public class House {
     private int area;
 
     // 房子建成时间
-    private String years;
+    private int years;
 
     // 挂牌时间
-    private String listing;
+    private LocalDateTime listing;
 
     // 朝向
     private String toward;
