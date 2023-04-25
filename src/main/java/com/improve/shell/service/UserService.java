@@ -1,6 +1,7 @@
 package com.improve.shell.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.improve.shell.pojo.po.User;
 import com.improve.shell.pojo.vo.UserVO;
 import com.improve.shell.util.Result;
 
@@ -9,7 +10,7 @@ import com.improve.shell.util.Result;
  * @CreateTime: 2023-04-19  19:01
  * @Description: 用户服务类接口
  */
-public interface UserService {
+public interface UserService extends IService<User> {
 
     /*
      * @description: 通过用户名+密码登录
