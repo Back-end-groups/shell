@@ -1,9 +1,10 @@
-package com.improve.shell.util;
+package com.improve.shell.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.improve.shell.handler.UserThreadLocal;
 import com.improve.shell.pojo.vo.Message;
 import com.improve.shell.pojo.vo.UserVO;
+import com.improve.shell.util.MessageUtils;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -38,7 +39,7 @@ public class ChatEndpoint {
      * @return: void
      **/
     @OnOpen
-    public void onOpen(Session session, EndpointConfig config) {
+    public void onOpen(Session session/*, EndpointConfig config*/) {
         // 1.将局部session对象赋值给成员session
         this.session = session;
         // 2.将当前用户登录信息赋值给成员uservo
@@ -57,7 +58,7 @@ public class ChatEndpoint {
      * @return: void
      **/
     @OnMessage
-    public void onMessage(String message, Session session) {
+    public void onMessage(String message/*, Session session*/) {
         try {
             // 1.将局部变量message转换成Message对象
             ObjectMapper objectMapper = new ObjectMapper();
@@ -86,7 +87,7 @@ public class ChatEndpoint {
      * @return: void
      **/
     @OnClose
-    public void onClose(Session session) {
+    public void onClose(/*Session session*/) {
         // 1.当前用户下线，则从在线用户中删除该用户
         onlineUsers.remove(uservo.getId());
         // 2.将新的所有在线用户通知给所有在线用户

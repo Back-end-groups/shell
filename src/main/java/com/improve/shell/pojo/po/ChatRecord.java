@@ -18,10 +18,10 @@ public class ChatRecord {
     private String id;
 
     // 发送者id
-    private String user01Id;
+    private Long senderId;
 
     // 接收者id
-    private String user02Id;
+    private Long receiverId;
 
     // 消息类型
     private String messageType;
