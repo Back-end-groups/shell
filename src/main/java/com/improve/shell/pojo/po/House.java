@@ -66,7 +66,7 @@ public class House {
     private String buildType;
 
     // 楼层
-    private String floor;
+    private Integer floor;
 
     // 是否有空调
     private boolean isElevator;
