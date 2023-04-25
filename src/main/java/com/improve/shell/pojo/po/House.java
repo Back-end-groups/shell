@@ -1,5 +1,7 @@
 package com.improve.shell.pojo.po;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -48,6 +50,7 @@ public class House {
     private int years;
 
     // 挂牌时间
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime listing;
 
     // 朝向
@@ -63,7 +66,7 @@ public class House {
     private String buildType;
 
     // 楼层
-    private String floor;
+    private Integer floor;
 
     // 是否有空调
     private boolean isElevator;
