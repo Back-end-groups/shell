@@ -22,8 +22,8 @@ DROP TABLE IF EXISTS `chat_record`;
 
 CREATE TABLE `chat_record` (
   `id` varchar(255) CHARACTER SET utf8 NOT NULL COMMENT '用户id+时间+对象id',
-  `user01_id` bigint NOT NULL COMMENT '发送者id',
-  `user02_id` bigint NOT NULL COMMENT '接收者id',
+  `sender_id` bigint NOT NULL COMMENT '发送者id',
+  `receiver_id` bigint NOT NULL COMMENT '接收者id',
   `message_type` enum('文字','emoji','图片','视频') CHARACTER SET utf8 DEFAULT NULL COMMENT '消息类型',
   `content` varchar(255) CHARACTER SET utf8 DEFAULT NULL COMMENT '消息内容',
   `send_time` datetime DEFAULT NULL COMMENT '发送时间',
@@ -31,6 +31,15 @@ CREATE TABLE `chat_record` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `chat_record` */
+
+insert  into `chat_record`(`id`,`sender_id`,`receiver_id`,`message_type`,`content`,`send_time`) values 
+('1',1,2,'文字','你好2','2023-04-24 16:23:19'),
+('2',1,3,'文字','你好1','2023-04-19 16:23:15'),
+('3',1,2,'文字','你好3','2023-04-25 16:23:09'),
+('4',2,1,'文字','你是谁','2023-04-21 16:24:17'),
+('5',1,2,'文字','666','2023-04-01 16:57:25'),
+('6',1,3,'文字','爱我的','2023-04-02 18:37:02'),
+('7',2,1,'文字','test','2023-04-24 06:42:18');
 
 /*Table structure for table `house` */
 
@@ -81,14 +90,17 @@ CREATE TABLE `user` (
   `birthday` date DEFAULT NULL COMMENT '出生日期',
   `description` varchar(255) DEFAULT NULL COMMENT '个性签名',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 
 /*Data for the table `user` */
 
 insert  into `user`(`id`,`username`,`password`,`sex`,`nickname`,`avatar`,`phone`,`id_card`,`create_time`,`role`,`status`,`address`,`birthday`,`description`) values 
 (1,'XV1dR','941b31e6daac21ec5cd97279e9f21dbe',NULL,NULL,NULL,NULL,NULL,'2023-04-20 09:07:28',NULL,NULL,NULL,NULL,NULL),
 (2,'SYb','fb3734ac8d6a32a3fe318bff5744bf5f',NULL,NULL,NULL,NULL,NULL,'2023-04-20 09:26:20',NULL,NULL,NULL,NULL,NULL),
-(3,'Z#B7Ae','zEH',NULL,NULL,NULL,NULL,NULL,'2023-04-20 10:16:20',NULL,NULL,NULL,NULL,NULL);
+(3,'Z#B7Ae','zEH',NULL,NULL,NULL,NULL,NULL,'2023-04-20 10:16:20',NULL,NULL,NULL,NULL,NULL),
+(4,'Oqvo8','(k4',NULL,NULL,NULL,NULL,NULL,'2023-04-20 19:03:33',NULL,NULL,NULL,NULL,NULL),
+(5,'shuai88','123456',NULL,NULL,NULL,NULL,NULL,'2023-04-21 21:08:45',NULL,NULL,NULL,NULL,NULL),
+(6,'shuai888','2e909b0ba63e32efb2f701c2c4a3e34c',NULL,NULL,NULL,NULL,NULL,'2023-04-21 21:11:18',NULL,NULL,NULL,NULL,NULL);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
