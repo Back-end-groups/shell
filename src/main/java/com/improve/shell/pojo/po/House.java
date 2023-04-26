@@ -22,6 +22,7 @@ public class House {
     // 主键id：上架房源时间+用户id
     private String id;
 
+
     // 房源信息标题
     private String title;
 

@@ -9,6 +9,5 @@ import java.util.List;
 @Data
 public class HouseVO extends House {
     List<String> images = new ArrayList<>(); //图片集
-    private String username; //用户名
 
 }
