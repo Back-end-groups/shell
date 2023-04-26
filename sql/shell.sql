@@ -61,7 +61,7 @@ CREATE TABLE `house` (
   `first_picture` varchar(200) DEFAULT NULL COMMENT '房源首图',
   `area` int DEFAULT NULL COMMENT '房源面积（平方米）',
   `years` int DEFAULT NULL COMMENT '房源建成年份',
-  `listing` date DEFAULT NULL COMMENT '挂牌时间',
+  `listing` datetime DEFAULT NULL COMMENT '挂牌时间',
   `toward` varchar(100) DEFAULT NULL COMMENT '朝向',
   `property_number` varchar(50) DEFAULT NULL COMMENT '房源编号',
   `address` varchar(255) DEFAULT NULL COMMENT '房源地址',
@@ -80,7 +80,7 @@ CREATE TABLE `house` (
 
 LOCK TABLES `house` WRITE;
 /*!40000 ALTER TABLE `house` DISABLE KEYS */;
-INSERT INTO `house` VALUES ('2023-04-25T09:23:32.1341','生期义志','Duis culpa sunt consectetur ullamco',34,NULL,'36','est dolor commodo dolor','http://dummyimage.com/400x400',85,0,'2023-04-25','et qui deserunt aliquip','25','浙江省汉中市六枝特区','esse eu in et magna',2,0,0,0);
+INSERT INTO `house` VALUES ('2023-04-25T09:23:32.1341','生期义志','Duis culpa sunt consectetur ullamco',34,NULL,'36','est dolor commodo dolor','http://dummyimage.com/400x400',85,0,'2023-04-25 00:00:00','et qui deserunt aliquip','25','浙江省汉中市六枝特区','esse eu in et magna',2,0,0,0),('2023-04-26 20:24:331111','斯色员','laborum proident sit',65,NULL,'88','labore incididunt in Lorem est','http://dummyimage.com/400x400',1,0,'2023-04-26 20:24:33','aute commodo','3','青海省沧州市兴海县','cillum quis pariatur esse do',56,0,0,0);
 /*!40000 ALTER TABLE `house` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -103,8 +103,31 @@ CREATE TABLE `house_images` (
 
 LOCK TABLES `house_images` WRITE;
 /*!40000 ALTER TABLE `house_images` DISABLE KEYS */;
-INSERT INTO `house_images` VALUES ('2023-04-25T09:23:32.1341','http://dummyimage.com/400x400'),('2023-04-25T09:23:32.1341','http://dummyimage.com/400x400'),('2023-04-25T09:23:32.1341','http://dummyimage.com/400x400');
+INSERT INTO `house_images` VALUES ('2023-04-25T09:23:32.1341','http://dummyimage.com/400x400'),('2023-04-25T09:23:32.1341','http://dummyimage.com/400x400'),('2023-04-25T09:23:32.1341','http://dummyimage.com/400x400'),('2023-04-26 20:24:331111','http://dummyimage.com/400x400');
 /*!40000 ALTER TABLE `house_images` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `house_with_user`
+--
+
+DROP TABLE IF EXISTS `house_with_user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `house_with_user` (
+  `house_id` varchar(100) NOT NULL COMMENT '房子id',
+  `uid` int NOT NULL COMMENT '用户id'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `house_with_user`
+--
+
+LOCK TABLES `house_with_user` WRITE;
+/*!40000 ALTER TABLE `house_with_user` DISABLE KEYS */;
+INSERT INTO `house_with_user` VALUES ('2023-04-26 20:24:331111',111111);
+/*!40000 ALTER TABLE `house_with_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -130,7 +153,7 @@ CREATE TABLE `user` (
   `birthday` date DEFAULT NULL COMMENT '出生日期',
   `description` varchar(255) DEFAULT NULL COMMENT '个性签名',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -139,7 +162,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'XV1dR','941b31e6daac21ec5cd97279e9f21dbe',NULL,NULL,NULL,NULL,NULL,'2023-04-20 09:07:28',NULL,NULL,NULL,NULL,NULL),(2,'SYb','fb3734ac8d6a32a3fe318bff5744bf5f',NULL,NULL,NULL,NULL,NULL,'2023-04-20 09:26:20',NULL,NULL,NULL,NULL,NULL),(3,'Z#B7Ae','zEH',NULL,NULL,NULL,NULL,NULL,'2023-04-20 10:16:20',NULL,NULL,NULL,NULL,NULL),(4,'Oqvo8','(k4',NULL,NULL,NULL,NULL,NULL,'2023-04-20 19:03:33',NULL,NULL,NULL,NULL,NULL),(5,'shuai88','123456',NULL,NULL,NULL,NULL,NULL,'2023-04-21 21:08:45',NULL,NULL,NULL,NULL,NULL),(6,'shuai888','2e909b0ba63e32efb2f701c2c4a3e34c',NULL,NULL,NULL,NULL,NULL,'2023-04-21 21:11:18',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `user` VALUES (1,'XV1dR','941b31e6daac21ec5cd97279e9f21dbe',NULL,NULL,NULL,NULL,NULL,'2023-04-20 09:07:28',NULL,NULL,NULL,NULL,NULL),(2,'SYb','fb3734ac8d6a32a3fe318bff5744bf5f',NULL,NULL,NULL,NULL,NULL,'2023-04-20 09:26:20',NULL,NULL,NULL,NULL,NULL),(3,'Z#B7Ae','zEH',NULL,NULL,NULL,NULL,NULL,'2023-04-20 10:16:20',NULL,NULL,NULL,NULL,NULL),(4,'Oqvo8','(k4',NULL,NULL,NULL,NULL,NULL,'2023-04-20 19:03:33',NULL,NULL,NULL,NULL,NULL),(5,'shuai88','123456',NULL,NULL,NULL,NULL,NULL,'2023-04-21 21:08:45',NULL,NULL,NULL,NULL,NULL),(6,'shuai888','2e909b0ba63e32efb2f701c2c4a3e34c',NULL,NULL,NULL,NULL,NULL,'2023-04-21 21:11:18',NULL,NULL,NULL,NULL,NULL),(7,'12345','533178406b9f3749d4df62ed1a4011dc',NULL,NULL,NULL,NULL,NULL,'2023-04-25 22:29:53',NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -152,4 +175,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-25 20:29:57
+-- Dump completed on 2023-04-26 21:11:36
