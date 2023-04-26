@@ -12,11 +12,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Message {
+public class ChatRecordVO {
 
     // 发送给指定toId的用户对象
     private Long toId;
 
-    // 发送信息的内容
-    private String message;
+    // 消息内容
+    private String content;
+
+    // 消息类型
+    private String messageType;
 }

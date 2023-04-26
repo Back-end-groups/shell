@@ -7,10 +7,7 @@ import com.improve.shell.mapper.UserMapper;
 import com.improve.shell.pojo.po.User;
 import com.improve.shell.pojo.vo.UserVO;
 import com.improve.shell.service.UserService;
-import com.improve.shell.util.JwtUtil;
-import com.improve.shell.util.MD5Utils;
-import com.improve.shell.util.RedisKey;
-import com.improve.shell.util.Result;
+import com.improve.shell.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,9 +115,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 将uservo的值全部赋值给user：为了用user存入数据库
         BeanUtils.copyProperties(uservo,user);
         // 获取并设置注册时间
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String nowTime = simpleDateFormat.format(System.currentTimeMillis());
-        user.setCreateTime(nowTime);
+        user.setCreateTime(TimeUtil.getNowTime());
         // 向数据库添加新注册的用户
         userMapper.insert(user);
         // 添加成功后通过设置uservo的id属性为数据库的id
