@@ -26,6 +26,13 @@ public class ChatController {
     private ChatRecordService chatRecordService;
 
 
+    /*
+     * @description: 获取和当前用户相关的所有聊天记录
+     * @author: fengxin
+     * @date: 2023/4/25 19:05
+     * @param: []
+     * @return: 和当前用户相关的所有聊天记录
+     **/
     @GetMapping("/getChatRecord")
     public Result getChatRecord(){
         // 1.拿到当前用户
