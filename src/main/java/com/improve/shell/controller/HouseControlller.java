@@ -1,6 +1,7 @@
 package com.improve.shell.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.improve.shell.handler.NoAuth;
 import com.improve.shell.handler.UserThreadLocal;
@@ -91,6 +92,29 @@ public class HouseControlller {
     }
 
     /**
+     * 查看用户所有的收藏列表
+     */
+    @NoAuth
+    @GetMapping("/allMyCollect")
+    public Result getAllMyCollect(Long uid){
+        List<HouseVO> houseVOS = houseWithUserService.AllMyCollect(uid);
+        return Result.success("查询用户的收藏房屋信息成功",houseVOS);
+    }
+
+    /**
+     * 查询用户所有发表的房屋信息
+     * @param uid
+     * @return
+     */
+    @NoAuth
+    @GetMapping("/myPublic")
+    public Result allMyPublic(Integer uid){
+        long Uid = uid.longValue();
+        List<HouseVO> myPublic = houseWithUserService.getMyPublic(Uid);
+        return Result.success("查询用户所有发表房屋信息成功",myPublic);
+    }
+
+    /**
      * 添加房屋信息
      * 先将房屋house保存在数据库中,根据Id获取HouseImages对象，
      * 判断对象是否为空，若为空则创建HouseImages对象，将houseId与图片之间关系插入到house_images表中
@@ -102,8 +126,8 @@ public class HouseControlller {
     @PostMapping("/save")
     public Result saveHouseWithImages(@RequestBody HouseVO houseVO) {
         UserVO userVO = UserThreadLocal.get();
-        String id = String.valueOf(userVO.getId());
-//        String id ="1111";
+//        String id = String.valueOf(userVO.getId());
+        String id ="1111";
 
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
@@ -111,15 +135,16 @@ public class HouseControlller {
 
         String hId = localTime + id;
 
-        if (id != null) {
+        if (StringUtils.isNotBlank(id)) {
             houseVO.setId(hId);
-            boolean saveHouse = houseService.save(houseVO);
+            houseService.save(houseVO); //先保存房屋信息
 
             HouseWithUser houseWithUser = new HouseWithUser();
             houseWithUser.setHouseId(houseVO.getId());
-            houseWithUser.setUid(userVO.getId());
-//        houseWithUser.setUid(111111L);
-            houseWithUserService.save(houseWithUser);
+//            houseWithUser.setUid(userVO.getId());
+            houseWithUser.setIsOwn(true);
+        houseWithUser.setUid(111111L);
+            houseWithUserService.save(houseWithUser);  //保存房屋 与 用户 之间关系
 
             List<String> images = houseVO.getImages();  //房子图片
             String voId = houseVO.getId();  //房子Id
@@ -132,7 +157,7 @@ public class HouseControlller {
                 houseImages.add(houseImages1);
             }
 
-            houseImagesService.saveBatch(houseImages);
+            houseImagesService.saveBatch(houseImages); //保存房屋图片 与 房屋 之间关系
 
             return Result.success("房屋添加成功");
         }
@@ -164,17 +189,68 @@ public class HouseControlller {
         return Result.success("房屋信息修改成功");
     }
 
+    /**
+     * 点击收藏
+     * @param houseId  房屋id
+     * @param uid      用户id
+     * @return
+     */
+    @NoAuth
+    @PostMapping("/clickCollect")
+    public Result clickCollect(String houseId,Integer uid){
+        long Uid = uid.longValue();
+        Boolean clickCollect = houseWithUserService.ClickCollect(houseId, Uid);
+        if(clickCollect)
+            return Result.success("收藏成功");
+        return Result.fail("收藏失败");
+    }
+
+    /**
+     * 取消收藏
+     * @param houseId    房屋id
+     * @param uid        用户id
+     * @return
+     */
+    @PutMapping("/cancelCollect")
+    public Result cancelCollect(String houseId,Integer uid){
+        long Uid = uid.longValue();
+        Boolean cancelCollect = houseWithUserService.CancelCollect(houseId, Uid);
+        if(cancelCollect)
+            return Result.success("取消收藏成功");
+        return Result.fail("取消收藏失败");
+    }
+
+
+    /**
+     * 删除房屋信息
+     * @param houseId   房屋id
+     * @return
+     */
     @DeleteMapping("/delete/{houseId}")
     @NoAuth
-    public Result deleteHouseWithImages(@PathVariable("houseId") String houseId){
-        boolean removeHouse = houseService.removeById(houseId);
-        LambdaQueryWrapper<HouseImages> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(HouseImages::getHouseId,houseId);
-        houseImagesService.remove(lambdaQueryWrapper);
+    public Result deleteHouseWithImages(@PathVariable("houseId") String houseId) {
 
-        LambdaQueryWrapper<HouseWithUser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(HouseWithUser::getHouseId,houseId);
-        houseWithUserService.remove(queryWrapper);
-        return Result.success("房屋删除成功");
+        //先判断房屋信息是否是本人发表，若是才有删除权限
+        if (houseWithUserService.isMyPublic(houseId)) {
+
+            //删除房屋信息
+             houseService.removeById(houseId);
+            LambdaQueryWrapper<HouseImages> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(HouseImages::getHouseId, houseId);
+
+            //删除房屋以及对应的房屋图片信息
+            houseImagesService.remove(lambdaQueryWrapper);
+
+            //删除房屋以及用户之间的关系
+            LambdaQueryWrapper<HouseWithUser> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(HouseWithUser::getHouseId, houseId);
+            houseWithUserService.remove(queryWrapper);
+            return Result.success("房屋删除成功");
+        }
+        return Result.fail("你并没有权限删除此房屋信息");
     }
+
+
+
+
 }
