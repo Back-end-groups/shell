@@ -9,7 +9,9 @@ import com.improve.shell.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -42,6 +44,7 @@ public class LoginHandler implements HandlerInterceptor {
         log.info("request==>{}",request);
         log.info("handler==>{}",handler);
         log.info("token==>{}",request.getHeader("Authorization"));
+
         if (!(handler instanceof HandlerMethod)){//如果不是访问的controller方法就直接放行
             return true;
         }
