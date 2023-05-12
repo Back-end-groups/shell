@@ -7,23 +7,19 @@ import com.improve.shell.handler.UserThreadLocal;
 import com.improve.shell.pojo.po.House;
 import com.improve.shell.pojo.po.HouseImages;
 import com.improve.shell.pojo.po.HouseWithUser;
-import com.improve.shell.pojo.po.User;
 import com.improve.shell.pojo.vo.HouseVO;
 import com.improve.shell.pojo.vo.UserVO;
 import com.improve.shell.service.HouseImagesService;
 import com.improve.shell.service.HouseService;
 import com.improve.shell.service.HouseWithUserService;
-import com.improve.shell.service.UserService;
 import com.improve.shell.util.Result;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
