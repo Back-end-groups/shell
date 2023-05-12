@@ -13,7 +13,6 @@ public class TimeUtil {
     // 获取当前时间
     public static String getNowTime(){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String nowTime = simpleDateFormat.format(System.currentTimeMillis());
-        return nowTime;
+        return simpleDateFormat.format(System.currentTimeMillis());
     }
 }

@@ -8,6 +8,7 @@ import com.improve.shell.util.RedisKey;
 import com.improve.shell.util.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -20,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @Component
 public class LoginHandler implements HandlerInterceptor {
-
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -42,9 +42,17 @@ public class LoginHandler implements HandlerInterceptor {
         log.info("request==>{}",request);
         log.info("handler==>{}",handler);
         log.info("token==>{}",request.getHeader("Authorization"));
+
         if (!(handler instanceof HandlerMethod)){//如果不是访问的controller方法就直接放行
             return true;
         }
+
+//        // 判断该类是否被该注解直接标记，对应第①种情况
+//        ha annotation = clazz.getDeclaredAnnotation(annotationType);
+//        if (annotation != null) {
+//            return annotation;
+//        }
+
 
         //如过方法上有@NoAuth注解就直接放行
         HandlerMethod handlerMethod = (HandlerMethod) handler;

@@ -14,6 +14,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ChatRecordVO {
 
+    // 来自from用户发来的信息
+    private Long fromId;
+
     // 发送给指定toId的用户对象
     private Long toId;
 

@@ -1,19 +1,27 @@
 package com.improve.shell.controller;
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.improve.shell.handler.NoAuth;
 import com.improve.shell.handler.UserThreadLocal;
 import com.improve.shell.mapper.ChatRecordMapper;
 import com.improve.shell.pojo.po.ChatRecord;
 import com.improve.shell.pojo.vo.ChatRecordVO;
 import com.improve.shell.pojo.vo.UserVO;
+import com.improve.shell.service.ChatRecordService;
 import com.improve.shell.util.MessageUtils;
+import com.improve.shell.util.MyBeanUtil;
 import com.improve.shell.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.websocket.*;
+import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.util.Map;
 import java.util.Set;
@@ -25,21 +33,47 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Description: websocket实现聊天功能
  */
 @Slf4j
-@Component
-@ServerEndpoint("/chat")
+//@NoAuth
+@Controller
+@ServerEndpoint("/chat/{id}")
 public class ChatEndpoint {
 
-    @Autowired
-    ChatRecordMapper chatRecordMapper;
-
     // 用来存储每一个客户端对象对应的 ChatEndpoint 对象
-    private static Map<Long, ChatEndpoint> onlineUsers = new ConcurrentHashMap<>();
+    private static Map<Long, Session> onlineUsers = new ConcurrentHashMap<>();
 
     // 声明Session对象，通过该对象可以发送消息给指定的用户
     private Session session;
 
     // 存储当前用户的登录信息
-    private UserVO uservo;
+//    private UserVO uservo;
+    private Long id;
+
+    /*
+     * @description: 抽取方法：将当前在线用户的id推送给所有的在线客户端
+     * @author: fengxin
+     * @date: 2023/4/20 22:43
+     * @param: []
+     * @return: void
+     **/
+    private void sendUsers() {
+        log.info("进行广播，通知所有用户，目前在线用户情况");
+
+        // 1. 获取所有在线用户的id
+        Set<Long> ids = onlineUsers.keySet();
+        // 2.封装成系统发送给用户的消息格式
+        String resultMessage = MessageUtils.getMessage(true, null, ids);
+        // 3.通过遍历所有的在线用户id
+        for (Long id : ids) {
+            /**/// 获取每个在线用户的id，通过id拿到对应的ChatEndpoint对象
+            Session session = onlineUsers.get(id);
+            try {
+                // 通过ChatEndpoint对象给对应在线用户发送系统消息
+                session.getBasicRemote().sendText(resultMessage);
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     /*
      * @description: 聊天连接建立时被调用：将当前在线用户的id推送给所有的在线客户端
@@ -49,15 +83,19 @@ public class ChatEndpoint {
      * @return: void
      **/
     @OnOpen
-    public void onOpen(Session session/*, EndpointConfig config*/) {
+//    @NoAuth
+    public void onOpen(Session session, @PathParam("id") Long id) {
+        log.info("进入onOpen方法！");
         // 1.将局部session对象赋值给成员session
         this.session = session;
         // 2.将当前用户登录信息赋值给成员uservo
-        this.uservo = UserThreadLocal.get();
+//        this.uservo = UserThreadLocal.get();
+        this.id = id;
         // 3.将当前用户对象存储到容器中（通过id标识在线用户）
-        onlineUsers.put(uservo.getId(),this);
+        onlineUsers.put(id/*uservo.getId()*/,session);
         // 4.将当前在线用户的id推送给所有的在线客户端
         sendUsers();
+        log.info("新用户成功建立连接，用户id：{}，当前在线人数：{}",id/*uservo.getUsername()*/,onlineUsers.size());
     }
 
     /*
@@ -68,42 +106,53 @@ public class ChatEndpoint {
      * @return: void
      **/
     @OnMessage
-    public void onMessage(String message/*, Session session*/) {
+//    @NoAuth
+    public void onMessage(String message, Session session) {
+        log.info("进入onMessage方法，接收到用户id：{}发来信息：{}",id/*uservo.getUsername()*/,message);
+
         try {
-            // 1.将局部变量message转换成ChatRecordVO对象
-            ObjectMapper objectMapper = new ObjectMapper();
-            ChatRecordVO chatRecordvo = objectMapper.readValue(message, ChatRecordVO.class);
-            // 2.获取接收者用户的id
-            Long receiverId = chatRecordvo.getToId();
-            // 获取发送者用户的id
-            Long senderId = uservo.getId();
+            // 1.将局部变量message转换成JSONObject对象
+            JSONObject obj = JSONUtil.parseObj(message);
+            // 2.获取接收者用户的id ,获取发送者用户的id ,消息类型 messageType
+            Long receiverId = obj.getLong("toId");
+            Long senderId = obj.getLong("fromId");
+            String messageType = obj.getStr("messageType");
+            // 3.获取消息数据
+            String content = obj.getStr("content");
+
+            ChatRecordVO chatRecordVO = new ChatRecordVO(senderId,receiverId,content,messageType);
             // 判断用户toId是否在线
             if (onlineUsers.containsKey(receiverId)) {
                 // 用户toId在线：
-                // 3.获取消息数据
-                String messageData = chatRecordvo.getContent();
                 // 4.封装成系统发送给用户的消息格式
-                String resultMessage = MessageUtils.getMessage(false, senderId, messageData);
+                String resultMessage = MessageUtils.getMessage(false, senderId, content);
                 // 5.服务器向指定（id）客户端发送数据
-                // 5.1 获取接收消息用户id对应的ChatEndpoint对象
-                ChatEndpoint chatEndpoint = onlineUsers.get(receiverId);
+                /**/// 5.1 获取接收消息用户id对应的ChatEndpoint对象
+                Session receiverSession = onlineUsers.get(receiverId);
                 // 5.2 通过ChatEndpoint对象给对应在线用户发送系统消息
-                chatEndpoint.session.getBasicRemote().sendText(resultMessage);
+                receiverSession.getBasicRemote().sendText(resultMessage);
             }
             // 将当前用户发送的消息记录到数据库
             ChatRecord chatRecord = new ChatRecord();
             // 把chatRecordvo里的值都赋值给chatRecord
-            BeanUtils.copyProperties(chatRecordvo,chatRecord);
+            BeanUtils.copyProperties(chatRecordVO,chatRecord);
             // 获取当前时间
             String nowTime = TimeUtil.getNowTime();
-            chatRecord.setId("" + uservo.getId() + nowTime + receiverId);
+            String cid = "" + id/*uservo.getId()*/ + nowTime + receiverId;
+            cid = cid.replace(" ","").replace("-","").replace(":","");
+            chatRecord.setId(cid);
             chatRecord.setSenderId(senderId);
             chatRecord.setReceiverId(receiverId);
             chatRecord.setSendTime(nowTime);
 
             // 将该条聊天记录新增到数据库
-            chatRecordMapper.insert(chatRecord);
+            // 1.通过工具类手动获取 chatRecordService 对象
+            ChatRecordService chatRecordService = MyBeanUtil.getBean(ChatRecordService.class);
+            // 2.调用 chatRecordService 的sava方法，将该条数据保存到数据库
+            chatRecordService.save(chatRecord);
+            log.info("将这条聊天记录：{}保存到了数据库", chatRecord);
         }catch (Exception e) {
+            log.info("onMessage方法出现错误了，快去调试~");
             e.printStackTrace();
         }
     }
@@ -116,50 +165,33 @@ public class ChatEndpoint {
      * @return: void
      **/
     @OnClose
-    public void onClose(/*Session session*/) {
+//    @NoAuth
+    public void onClose(Session session) {
+        log.info("进入onClose方法，在线用户 -1");
+
         // 1.当前用户下线，则从在线用户中删除该用户
-        onlineUsers.remove(uservo.getId());
+        onlineUsers.remove(id/*uservo.getId()*/);
         // 2.将新的所有在线用户通知给所有在线用户
         sendUsers();
     }
 
+
+
     /*
-     * @description: 抽取方法：将当前在线用户的id推送给所有的在线客户端
+     * @description: 当 websocket 发生错误自动调用此方法
      * @author: fengxin
-     * @date: 2023/4/20 22:43
-     * @param: []
+     * @date: 2023/5/12 18:30
+     * @param: [session, error]
      * @return: void
      **/
-    private void sendUsers() {
-        // 1. 获取所有在线用户的id
-        Set<Long> ids = onlineUsers.keySet();
-        // 2.封装成系统发送给用户的消息格式
-        String resultMessage = MessageUtils.getMessage(true, null, ids);
-        // 3.通过遍历所有的在线用户id
-        for (Long id : ids) {
-            // 获取每个在线用户的id，通过id拿到对应的ChatEndpoint对象
-            ChatEndpoint chatEndpoint = onlineUsers.get(id);
-            try {
-                // 通过ChatEndpoint对象给对应在线用户发送系统消息
-                chatEndpoint.session.getBasicRemote().sendText(resultMessage);
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * 配置错误信息处理
-     * @param session
-     * @param t
-     */
     @OnError
-    public void onError(Session session, Throwable t) {
+//    @NoAuth
+    public void onError(Session session, Throwable error) {
         //什么都不想打印都去掉就好了
-        log.info("【websocket消息】出现未知错误 ");
+        log.info(" websocket 出错啦 -_-!");
         //打印错误信息，如果你不想打印错误信息，去掉就好了
         //这里打印的也是  java.io.EOFException: null
-        t.printStackTrace();
+        error.printStackTrace();
     }
 
 }
