@@ -30,7 +30,7 @@ public class LoginHandler implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // 方法执行之前进行拦截
+                // 方法执行之前进行拦截
         /**
          * 1. 判断请求是否是请求 controller方法
          * 2. 有些接口不需要登录拦截，需要开发自定义的注解 @NoAuth => 此注解标识的，表示不需要登录验证
@@ -46,13 +46,6 @@ public class LoginHandler implements HandlerInterceptor {
         if (!(handler instanceof HandlerMethod)){//如果不是访问的controller方法就直接放行
             return true;
         }
-
-//        // 判断该类是否被该注解直接标记，对应第①种情况
-//        ha annotation = clazz.getDeclaredAnnotation(annotationType);
-//        if (annotation != null) {
-//            return annotation;
-//        }
-
 
         //如过方法上有@NoAuth注解就直接放行
         HandlerMethod handlerMethod = (HandlerMethod) handler;

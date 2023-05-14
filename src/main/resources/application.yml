@@ -15,6 +15,7 @@ spring:
 
 
 
+
   # redis相关配置
   redis:
     # 配置主机
@@ -23,6 +24,9 @@ spring:
     database: 0
     # 配置指定端口
     port: 6379
+  # es相关配置
+  elasticsearch:
+    uris: http://localhost:9200
 
 project:
   # 分页查询

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 import java.time.LocalDateTime;
 
@@ -15,13 +17,14 @@ import java.time.LocalDateTime;
  * @Description: 对应房源表
  */
 @Data
+@Document(indexName = "houses")
 @AllArgsConstructor
 @NoArgsConstructor
 public class House {
 
     // 主键id：上架房源时间+用户id
+    @Id
     private String id;
-
 
     // 房源信息标题
     private String title;
@@ -36,7 +39,7 @@ public class House {
     private Long downPayment;
 
     // 房源总价
-    private String totalPrice;
+    private Long totalPrice;
 
     // 房型（例如：三室两厅）
     private String houseType;

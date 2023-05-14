@@ -2,23 +2,15 @@ package com.improve.shell.controller;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.improve.shell.handler.NoAuth;
-import com.improve.shell.handler.UserThreadLocal;
-import com.improve.shell.mapper.ChatRecordMapper;
 import com.improve.shell.pojo.po.ChatRecord;
 import com.improve.shell.pojo.vo.ChatRecordVO;
-import com.improve.shell.pojo.vo.UserVO;
 import com.improve.shell.service.ChatRecordService;
 import com.improve.shell.util.MessageUtils;
 import com.improve.shell.util.MyBeanUtil;
 import com.improve.shell.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
@@ -33,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Description: websocket实现聊天功能
  */
 @Slf4j
-//@NoAuth
 @Controller
 @ServerEndpoint("/chat/{id}")
 public class ChatEndpoint {
@@ -83,8 +74,8 @@ public class ChatEndpoint {
      * @return: void
      **/
     @OnOpen
-//    @NoAuth
     public void onOpen(Session session, @PathParam("id") Long id) {
+
         log.info("进入onOpen方法！");
         // 1.将局部session对象赋值给成员session
         this.session = session;
@@ -106,7 +97,6 @@ public class ChatEndpoint {
      * @return: void
      **/
     @OnMessage
-//    @NoAuth
     public void onMessage(String message, Session session) {
         log.info("进入onMessage方法，接收到用户id：{}发来信息：{}",id/*uservo.getUsername()*/,message);
 
@@ -131,7 +121,14 @@ public class ChatEndpoint {
                 Session receiverSession = onlineUsers.get(receiverId);
                 // 5.2 通过ChatEndpoint对象给对应在线用户发送系统消息
                 receiverSession.getBasicRemote().sendText(resultMessage);
+
+
             }
+            // 6.向发送者反馈发送成功
+            String returnMessage = MessageUtils.getMessage(true, null,"发送成功！");
+            Session senderSession = onlineUsers.get(senderId);
+            senderSession.getBasicRemote().sendText(returnMessage);
+
             // 将当前用户发送的消息记录到数据库
             ChatRecord chatRecord = new ChatRecord();
             // 把chatRecordvo里的值都赋值给chatRecord
@@ -165,7 +162,6 @@ public class ChatEndpoint {
      * @return: void
      **/
     @OnClose
-//    @NoAuth
     public void onClose(Session session) {
         log.info("进入onClose方法，在线用户 -1");
 
@@ -185,7 +181,6 @@ public class ChatEndpoint {
      * @return: void
      **/
     @OnError
-//    @NoAuth
     public void onError(Session session, Throwable error) {
         //什么都不想打印都去掉就好了
         log.info(" websocket 出错啦 -_-!");

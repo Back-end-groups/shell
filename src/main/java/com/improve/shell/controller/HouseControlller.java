@@ -35,12 +35,12 @@ public class HouseControlller {
 
     @Autowired
     private HouseImagesService houseImagesService;
+
     /**
      * 查询单个房屋信息，根据前端传入的房屋ID获取房屋信息并返回
      * @param houseId
      * @return
      */
-
     @GetMapping("/{houseId}")
     public Result getOneHouse(@PathVariable String houseId){
         House room = houseService.getById(houseId);
